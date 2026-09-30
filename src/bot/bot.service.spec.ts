@@ -61,13 +61,42 @@ describe('BotService', () => {
 
   it('consulta y muestra las vacaciones disponibles', async () => {
     rrhhApi.getVacaciones.mockResolvedValue({
+      data: [
+        {
+          gestion: 2026,
+          dias_disponibles: 12.5,
+          dias: 12,
+          horas: 4,
+          minutos: 0,
+          texto: '12 días y 4 horas',
+        },
+      ],
+      meta: {
+        total_dias_disponibles: 12.5,
+        total_dias: 12,
+        total_horas: 4,
+        total_minutos: 0,
+        total_texto: '12 días y 4 horas',
+      },
+    });
+
+    await service.handle('70001001', '1');
+
+    expect(rrhhApi.getVacaciones).toHaveBeenCalledWith(7);
+    expect(evolution.sendText).toHaveBeenCalledWith(
+      '70001001',
+      expect.stringContaining('Total: *12 días y 4 horas*'),
+    );
+  });
+
+  it('usa el formato decimal cuando la api no envia el desglose', async () => {
+    rrhhApi.getVacaciones.mockResolvedValue({
       data: [{ gestion: 2026, dias_disponibles: 12.5 }],
       meta: { total_dias_disponibles: 12.5 },
     });
 
     await service.handle('70001001', '1');
 
-    expect(rrhhApi.getVacaciones).toHaveBeenCalledWith(7);
     expect(evolution.sendText).toHaveBeenCalledWith(
       '70001001',
       expect.stringContaining('Total: *12.5 días*'),
@@ -77,7 +106,12 @@ describe('BotService', () => {
   it('consulta y muestra las compensaciones disponibles', async () => {
     rrhhApi.getCompensaciones.mockResolvedValue({
       data: [],
-      meta: { total_horas_disponibles: 4.5 },
+      meta: {
+        total_horas_disponibles: 4.5,
+        total_horas: 4,
+        total_minutos: 30,
+        total_texto: '4 horas y 30 minutos',
+      },
     });
 
     await service.handle('70001001', '2');
@@ -85,7 +119,7 @@ describe('BotService', () => {
     expect(rrhhApi.getCompensaciones).toHaveBeenCalledWith(7);
     expect(evolution.sendText).toHaveBeenCalledWith(
       '70001001',
-      expect.stringContaining('Horas disponibles: *4.5 hrs*'),
+      expect.stringContaining('Horas disponibles: *4 horas y 30 minutos*'),
     );
   });
 
@@ -97,6 +131,10 @@ describe('BotService', () => {
           fecha_inicio: '2026-09-10',
           fecha_fin: '2026-09-12',
           dias_solicitados: 2,
+          dias: 2,
+          horas: 0,
+          minutos: 0,
+          texto: '2 días',
           estado: 'aprobado',
         },
       ],
@@ -107,7 +145,7 @@ describe('BotService', () => {
     expect(evolution.sendText).toHaveBeenCalledWith(
       '70001001',
       expect.stringContaining(
-        '10/09/2026 - 12/09/2026 por 2.0 días. Estado: aprobado.',
+        '10/09/2026 - 12/09/2026 por 2 días. Estado: aprobado.',
       ),
     );
   });
@@ -119,6 +157,9 @@ describe('BotService', () => {
           id: 2,
           fecha_compensacion: '2026-09-15',
           horas_solicitadas: 3,
+          horas: 3,
+          minutos: 0,
+          texto: '3 horas',
           estado: 'pendiente',
         },
       ],
@@ -129,7 +170,7 @@ describe('BotService', () => {
     expect(evolution.sendText).toHaveBeenCalledWith(
       '70001001',
       expect.stringContaining(
-        '15/09/2026 - 3.0 horas solicitadas. Estado: pendiente.',
+        '15/09/2026 - 3 horas solicitadas. Estado: pendiente.',
       ),
     );
   });

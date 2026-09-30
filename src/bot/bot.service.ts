@@ -70,26 +70,32 @@ export class BotService {
     const detalle = vacaciones.data
       .map(
         (vacacion) =>
-          `* ${vacacion.gestion ?? 'Sin gestión'}: *${this.decimal(vacacion.dias_disponibles)} días*`,
+          `* ${vacacion.gestion ?? 'Sin gestión'}: *${vacacion.texto ?? `${this.decimal(vacacion.dias_disponibles)} días`}*`,
       )
       .join('\n');
+
+    const total =
+      vacaciones.meta.total_texto ??
+      `${this.decimal(vacaciones.meta.total_dias_disponibles)} días`;
 
     return (
       '*Vacaciones disponibles*\n\n' +
       `${detalle}\n` +
       '-----------------\n' +
-      `Total: *${this.decimal(vacaciones.meta.total_dias_disponibles)} días*\n\n` +
+      `Total: *${total}*\n\n` +
       this.otherOptions()
     );
   }
 
   private async showCompensations(empleadoId: number): Promise<string> {
     const compensaciones = await this.rrhhApi.getCompensaciones(empleadoId);
-    const horas = this.decimal(compensaciones.meta.total_horas_disponibles);
+    const total =
+      compensaciones.meta.total_texto ??
+      `${this.decimal(compensaciones.meta.total_horas_disponibles)} hrs`;
 
     return (
       'Horas de compensación:\n\n' +
-      `Horas disponibles: *${horas} hrs*\n\n` +
+      `Horas disponibles: *${total}*\n\n` +
       this.otherOptions()
     );
   }
@@ -124,16 +130,22 @@ export class BotService {
   }
 
   private formatVacationRequest(solicitud: SolicitudVacacion): string {
+    const cantidad =
+      solicitud.texto ?? `${this.decimal(solicitud.dias_solicitados)} días`;
+
     return (
       `* ${this.date(solicitud.fecha_inicio)} - ${this.date(solicitud.fecha_fin)}` +
-      ` por ${this.decimal(solicitud.dias_solicitados)} días. Estado: ${solicitud.estado}.`
+      ` por ${cantidad}. Estado: ${solicitud.estado}.`
     );
   }
 
   private formatCompensationRequest(solicitud: SolicitudCompensacion): string {
+    const cantidad =
+      solicitud.texto ?? `${this.decimal(solicitud.horas_solicitadas)} horas`;
+
     return (
       `* ${this.date(solicitud.fecha_compensacion)} - ` +
-      `${this.decimal(solicitud.horas_solicitadas)} horas solicitadas. ` +
+      `${cantidad} solicitadas. ` +
       `Estado: ${solicitud.estado}.`
     );
   }
