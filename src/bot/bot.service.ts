@@ -3,7 +3,7 @@ import { EvolutionService } from '../evolution/evolution.service';
 import { RrhhApiService } from '../rrhh-api/rrhh-api.service';
 import {
   Empleado,
-  SolicitudCompensacion,
+  RegistroCompensacion,
   SolicitudVacacion,
 } from '../rrhh-api/rrhh-api.types';
 
@@ -115,18 +115,17 @@ export class BotService {
   }
 
   private async showCompensationRequests(empleadoId: number): Promise<string> {
-    const solicitudes =
-      await this.rrhhApi.getSolicitudesCompensaciones(empleadoId);
+    const registros = await this.rrhhApi.getRegistrosCompensaciones(empleadoId);
 
-    if (solicitudes.data.length === 0) {
-      return `No tienes registros de solicitudes de compensación\n\n${this.otherOptions()}`;
+    if (registros.data.length === 0) {
+      return `No tienes movimientos de compensación registrados\n\n${this.otherOptions()}`;
     }
 
-    const detalle = solicitudes.data
-      .map((solicitud) => this.formatCompensationRequest(solicitud))
+    const detalle = registros.data
+      .map((registro) => this.formatCompensationRecord(registro))
       .join('\n');
 
-    return `*Solicitudes de compensación*\n\n${detalle}\n\n${this.otherOptions()}`;
+    return `*Movimientos de compensación*\n\n${detalle}\n\n${this.otherOptions()}`;
   }
 
   private formatVacationRequest(solicitud: SolicitudVacacion): string {
@@ -139,14 +138,14 @@ export class BotService {
     );
   }
 
-  private formatCompensationRequest(solicitud: SolicitudCompensacion): string {
-    const cantidad =
-      solicitud.texto ?? `${this.decimal(solicitud.horas_solicitadas)} horas`;
+  private formatCompensationRecord(registro: RegistroCompensacion): string {
+    const cantidad = registro.texto ?? `${this.decimal(registro.horas)} horas`;
+    const descripcion = registro.descripcion ? `. ${registro.descripcion}` : '';
 
     return (
-      `* ${this.date(solicitud.fecha_compensacion)} - ` +
-      `${cantidad} solicitadas. ` +
-      `Estado: ${solicitud.estado}.`
+      `* ${this.date(registro.fecha)} - ` +
+      `${cantidad} (${registro.tipo})` +
+      `${descripcion}.`
     );
   }
 
@@ -159,7 +158,7 @@ export class BotService {
       '1. Días de vacaciones\n' +
       '2. Horas de compensación\n' +
       '3. Vacaciones solicitadas\n' +
-      '4. Compensaciones solicitadas'
+      '4. Movimientos de compensación'
     );
   }
 

@@ -20,7 +20,7 @@ describe('BotService', () => {
     getVacaciones: jest.fn(),
     getCompensaciones: jest.fn(),
     getSolicitudesVacaciones: jest.fn(),
-    getSolicitudesCompensaciones: jest.fn(),
+    getRegistrosCompensaciones: jest.fn(),
   };
   const evolution = { sendText: jest.fn() };
   let service: BotService;
@@ -150,17 +150,20 @@ describe('BotService', () => {
     );
   });
 
-  it('muestra las solicitudes de compensación', async () => {
-    rrhhApi.getSolicitudesCompensaciones.mockResolvedValue({
+  it('muestra los movimientos de compensación', async () => {
+    rrhhApi.getRegistrosCompensaciones.mockResolvedValue({
       data: [
         {
           id: 2,
-          fecha_compensacion: '2026-09-15',
-          horas_solicitadas: 3,
+          gestion: 2026,
+          mes: 9,
+          fecha: '2026-09-15',
+          tipo: 'uso',
           horas: 3,
+          horas_desglose: 3,
           minutos: 0,
           texto: '3 horas',
-          estado: 'pendiente',
+          descripcion: 'Uso de prueba',
         },
       ],
     });
@@ -169,9 +172,7 @@ describe('BotService', () => {
 
     expect(evolution.sendText).toHaveBeenCalledWith(
       '70001001',
-      expect.stringContaining(
-        '15/09/2026 - 3 horas solicitadas. Estado: pendiente.',
-      ),
+      expect.stringContaining('15/09/2026 - 3 horas (uso). Uso de prueba.'),
     );
   });
 });

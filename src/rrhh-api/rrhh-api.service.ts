@@ -4,9 +4,9 @@ import { BotTokenProviderService } from './bot-token-provider.service';
 import {
   Empleado,
   Lista,
+  RegistroCompensacion,
   ResumenCompensaciones,
   ResumenVacaciones,
-  SolicitudCompensacion,
   SolicitudVacacion,
 } from './rrhh-api.types';
 
@@ -46,11 +46,11 @@ export class RrhhApiService {
     );
   }
 
-  getSolicitudesCompensaciones(
+  getRegistrosCompensaciones(
     empleadoId: number,
-  ): Promise<Lista<SolicitudCompensacion>> {
-    return this.getRequired<Lista<SolicitudCompensacion>>(
-      `/empleados/${empleadoId}/solicitudes-compensaciones`,
+  ): Promise<Lista<RegistroCompensacion>> {
+    return this.getRequired<Lista<RegistroCompensacion>>(
+      `/empleados/${empleadoId}/registros-compensaciones`,
     );
   }
 
