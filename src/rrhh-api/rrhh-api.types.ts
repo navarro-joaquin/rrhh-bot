@@ -31,11 +31,11 @@ export interface ResumenVacaciones {
 
 export interface Compensacion {
   gestion: number | null;
-  mes: number;
   cantidad_horas: number;
   horas?: number;
   minutos?: number;
   texto?: string;
+  fecha_registro: string | null;
 }
 
 export interface ResumenCompensaciones {
@@ -60,17 +60,14 @@ export interface SolicitudVacacion {
   estado: string;
 }
 
-export interface RegistroCompensacion {
+export interface SolicitudCompensacion {
   id: number;
-  gestion: number | null;
-  mes: number;
-  fecha: string | null;
-  tipo: string;
-  horas: number;
-  horas_desglose?: number;
+  fecha_compensacion: string | null;
+  horas_solicitadas: number;
+  horas?: number;
   minutos?: number;
   texto?: string;
-  descripcion: string | null;
+  estado: string;
 }
 
 export interface Lista<T> {
