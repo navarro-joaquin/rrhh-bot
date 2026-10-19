@@ -96,3 +96,9 @@ pnpm run build
 Durante la transición, el webhook de Laravel puede permanecer activo, pero
 Evolution debe enviar cada instancia a un solo webhook para evitar respuestas
 duplicadas entre ambos servicios.
+
+## API de notificaciones
+
+Sistemas externos (como el control de biométricos) pueden enviar mensajes de
+WhatsApp mediante `POST /api/v1/notifications/text`. Consulta
+[docs/api-notificaciones.md](docs/api-notificaciones.md).

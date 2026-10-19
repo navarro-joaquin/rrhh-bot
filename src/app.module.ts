@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { BotModule } from './bot/bot.module';
 import { ConfigModule } from './config/config.module';
 import { EvolutionModule } from './evolution/evolution.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { RrhhApiModule } from './rrhh-api/rrhh-api.module';
 import { WhatsappModule } from './whatsapp/whatsapp.module';
 
@@ -14,6 +15,7 @@ import { WhatsappModule } from './whatsapp/whatsapp.module';
     EvolutionModule,
     BotModule,
     WhatsappModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

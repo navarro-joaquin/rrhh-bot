@@ -26,6 +26,10 @@ export class AppConfigService {
     return process.env.WEBHOOK_SECRET?.trim() || undefined;
   }
 
+  get notificationsApiKey(): string | undefined {
+    return process.env.NOTIFICATIONS_API_KEY?.trim() || undefined;
+  }
+
   get requestTimeoutMs(): number {
     const configuredValue = Number(process.env.REQUEST_TIMEOUT_MS ?? 10000);
 
